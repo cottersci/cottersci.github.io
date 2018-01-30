@@ -1,8 +1,8 @@
 ---
 title: "More About The Background Image"
 date: 2017-08-14T19:21:07-04:00
-draft: true
-pinned: true
+draft: false
+pinned: "false"
 type: "Further Reading"
 ---
 

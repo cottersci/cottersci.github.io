@@ -1,0 +1,14 @@
+<ul class="links">
+  {{ $currentPage := . }}
+  {{ range .Site.Menus.main }}
+    <li class="{{if or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) }} active{{end}}"><a href="{{ .URL }}">{{ .Name }}</a></li>
+  {{ end }}
+</ul>
+<ul class="icons">
+  <li><a href="https://github.com/cottersci" class="icon fa-github"><span class="label">GitHub</span></a></li>
+  <li><a href="https://www.linkedin.com/in/crcotter/" class="icon alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+  <!-- not used
+    <li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+    <li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+    <li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li> -->
+</ul>

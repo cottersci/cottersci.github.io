@@ -2,3 +2,11 @@ theme = "html5up_massively"
 baseurl = "http://www.sciencesundries.com"
 languageCode = "en-us"
 title = "Science Sundries"
+sectionPagesMenu = "main"
+
+[[menu.main]]
+    name = "About"
+    title = "About"
+    weight = 100
+    identifier = "About"
+    url = "/"

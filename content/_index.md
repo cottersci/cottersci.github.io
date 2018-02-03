@@ -4,7 +4,7 @@ date: 2017-03-23
 publishdate: 2017-03-24
 ---
 ## Chris Cotter
-<center>Ph.D. Candidate, University of Georgia</center>
+<center>University of Georgia</center>
 
 ### Thesis work
 Imagine trying to understand the flow of city traffic with little understanding of how cars, traffic signs or signals work. Why do some cars stop while others continue? Why do some blatantly ignore rules others appear to follow? Now imagine untangling this while the city is covered in a dense fog (similar to the opacity of tissue). That is what it is like to study cell-cell coordination.

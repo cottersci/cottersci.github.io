@@ -10,7 +10,7 @@ pinned: "false"
 
 {{%
   figure src="/publications/PNAS2017/LS3909-LS3629-50-200msec-1secdelay.gif"
-  caption="Example of cell trajectories extracted from time-lapse movie. Each bright white dot is one cell, with a randomly colored trajectory path showing it's previous positions. For each high-fluorescent cell there are approximately 2,500 low-fluorescent cells surrounding it. Ellipses indicate aggregate positions detected using the weak florescence of the surrounding cells"
+  caption="Example of cell trajectories extracted from a time-lapse movie. Each bright white dot is one cell, with a randomly colored trajectory path showing the cell's previous positions. For each high-fluorescent cell there are approximately 2,500 low-fluorescent cells surrounding it. Ellipses indicate aggregate positions detected using the weak florescence of the surrounding cells"
   width="75%"
   class="figure_centered"
 %}}
@@ -31,7 +31,7 @@ In the end, the computer simulations revealed that three behaviors were necessar
 The work is important in that none of the cues altering cell behavior are known, nor are the mechanisms by which the cells respond to these cues. Nevertheless, the simulations make strong predictions about the emergent pattern-building process that can be followed up by examination of mutants that lack one of these four behaviors. The results also suggest a more general role for these three behaviors in other patterning processes such as wound healing and tumor metastasis.
 
 #### Other Press
-* [npj's Biofilmes and Microbiomes blog](http://npjbiofilmscommunity.nature.com/users/7272-ben-libberton/posts/17212-still-learning-from-myxococcus)
+* [npj's Biofilms and Microbiomes blog](http://npjbiofilmscommunity.nature.com/users/7272-ben-libberton/posts/17212-still-learning-from-myxococcus)
 
 #### Acknowledgements
-*This article is based off an unpublished press release Dr. Lawrence Shimkets and I wrote. I thank Dr. Shimkets for his time and effort in editing and refining the text*
+*This article is based off an unpublished press release Dr. Lawrence Shimkets and I wrote. I thank Dr. Shimkets for his time and effort in editing and refining the original text*

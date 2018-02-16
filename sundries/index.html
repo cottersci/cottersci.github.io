@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Sundries</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/custom.css" />
+<noscript><link rel="stylesheet" href="/sassets/css/noscript.css" /></noscript>
+
+		
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-beta1/katex.min.js" integrity="sha384-O4hpKqcplNCe+jLuBVEXC10Rn1QEqAmX98lKAIFBEDxZI0a+6Z2w2n8AEtQbR4CD" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-beta1/contrib/auto-render.min.js" integrity="sha384-IiI65aU9ZYub2MY9zhtKd1H2ps7xxf+eb2YFG9lX6uRqpXCvBTOidPRCXCrQ++Uc" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-beta1/katex.min.css" integrity="sha384-VEnyslhHLHiYPca9KFkBB3CMeslnM9CzwjxsEbZTeA21JBm7tdLwKoZmCt3cZTYD" crossorigin="anonymous">
+
+		<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="/js/function-plot.js"></script>
+
+	</head>
+	<body class="is-loading">
+
+		
+			<div id="wrapper">
+
+				
+					<header id="header">
+						<a href="index.html" class="logo">Science Sundries</a>
+
+					</header>
+
+				
+					<nav id="nav">
+						<ul class="links">
+  
+  
+    <li class=""><a href="/">About</a></li>
+  
+    <li class=""><a href="/publications/">Publications</a></li>
+  
+    <li class=" active"><a href="/sundries/">Sundries</a></li>
+  
+</ul>
+<ul class="icons">
+  <li><a href="https://github.com/cottersci" class="icon fa-github"><span class="label">GitHub</span></a></li>
+  <li><a href="https://www.linkedin.com/in/crcotter/" class="icon alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+  
+</ul>
+
+					</nav>
+
+				
+						<div id="main">
+
+							
+								<section class="post">
+									<header class="major">
+										<h3>Sundries</h3>
+									</header>
+									<h2 id="generative-adversarial-networks-gans">Generative Adversarial Networks (GANs)</h2>
+
+<p><center><a href="https://github.com/cottersci/ModelTests">See the code on GitHub</a></center></p>
+
+<p>These notes assume you have read [1], and only cover GAN topics that were confusing to me after gaining an initial understanding of GANs. This is not a good place to start learning about GANs. There are <a href="https://www.google.com/search?q=introduction+to+generative+adversarial+networks">many excellent</a> articles introducing GANs on the web. Come back after you've got a grasp on the basics!</p>
+
+<h3 id="introduction-and-definitions">Introduction and Definitions</h3>
+
+<p>Generative Adversarial Networks (GANs) follow the work of [1], minimizing the adversarial game:</p>
+
+<p><span  class="math">\[
+\min\limits_{G} \max\limits_{D} V(D,G) = E_{x \sim p(x)}\log\Big[\sigma \big( D(x) \big) \Big] + E_{z \sim p(z)}\log\Big[ 1- \sigma \big(D(G(z)\big) \Big]
+\]</span></p>
+
+<p>where</p>
+
+<ul>
+<li><span  class="math">\(D\)</span> and <span  class="math">\(G\)</span> are neural neural networks.</li>
+<li><span  class="math">\(\sigma\)</span> is the sigmoid function (<span  class="math">\(\frac{1}{1+e^{-x}}\)</span>).</li>
+<li><span  class="math">\(p(z)\)</span> is a multivariate normal distribution with mean <span  class="math">\(0\)</span> and diagonal covariance (<span  class="math">\(p(z) = \mathcal{N}(0,I)\)</span>).</li>
+<li>$p(x)$ is the data distribution we wish $G$ to model. We have <span  class="math">\(\{x_1, ..., x_N\}\)</span> real samples taken from <span  class="math">\(p_{data}\)</span>.</li>
+</ul>
+
+<!-- more -->
+
+<p>In [1], the sigmoid function is implicitly included in <span  class="math">\(D\)</span>, it is included explicitly here to highlight the vanishing gradient problem discussed below.</p>
+
+<p>The networks can be trained via stochastic gradient decent (SGD) by minimizing the loss functions</p>
+
+<p><span  class="math">\[
+\begin{aligned}
+L_{D} &= E_{x \sim p_{data}(x)}-\log\Big[ \sigma \big( D(x) \big) \Big] + E_{z \sim p(z)}-\log\Big[ 1- \sigma \big(D(G(z)\big) \Big] \\
+L_{G} &= E_{z \sim p(z)}\log\Big[ 1 - \sigma \big(D(G(z)\big) \Big]
+\end{aligned}
+\]</span></p>
+
+<p>Note the change in the sign of the $log$ functions in $L_D$ relative to the first equation. This is required to use stochastic gradient <strong>descent</strong>, otherwise stochastic gradient <strong>ascent</strong> is required (as noted in <em>Algorithm 1</em> of [1]). Ideally, $L_D$ would be fully minimized before minimizing $\hat{L}_G$, however, the derivative of the sigmoid function ( $\frac{d\sigma(x)}{dx} = \sigma(x)\big(1 - \sigma(x)\big)$) approaches $0$ as $x$ approaches <span  class="math">\(-\infty\)</span> or <span  class="math">\(\infty\)</span>.</p>
+
+
+
+<center>
+<figure id="fig_fd819206bdba58d75322abfea1a49e07bd8d60de"></figure>
+</center>
+
+<script type="text/javascript">
+functionPlot({
+   width:"400", 
+   height:"300", 
+  target:  "#fig_" + "fd819206bdba58d75322abfea1a49e07bd8d60de", 
+  data: JSON.parse("[{ 'title':'σ(x)', 'fn':'1/(1+exp(-x))'}, { 'title':'dσ(x)/dx', 'fn':'1/(1+exp(-x))(1 - 1/(1+exp(-x)))'}]".replace(/'/g, '"')),
+  
+   xAxis:JSON.parse("{ 'domain':[-10,10], 'label':'D(x)' }".replace(/'/g, '"')), 
+   yAxis:JSON.parse("{ 'domain':[0,1] }".replace(/'/g, '"')), 
+   disableZoom:"True", 
+});
+
+
+  var caption = document.createElement("figcaption")
+  caption.append("Derivative gradients vanish as $x$ approaches 0 or 1. $\\sigma(x)$ in blue, $\\frac{d\\sigma(x)}{dx}$ in red")
+  document.getElementById("fig_fd819206bdba58d75322abfea1a49e07bd8d60de").appendChild(caption)
+
+</script>
+
+
+<p>Thus, gradients are maximum when <span  class="math">\(\sigma(D(x)) = 0.5\)</span>, and diminish as $D$ becomes better at classifying samples from <span  class="math">\(G(z)\)</span> as fake (<span  class="math">\( D(G(x)) << 0\)</span>). As a result, training $D$ to optimality will cause very little information to flow through the gradient to $G$. To counteract this, the weights of $D$ and $G$ are both updated on each mini batch. In practice, this simultaneous training allows <span  class="math">\(G\)</span> to stay sufficiently good at tricking <span  class="math">\(D\)</span> to avoid diminished gradients. However, you probably noticed that $L_G$ is a little more complicated than just a sigma function: $L_G = \log(1 - \sigma(x))$. Let's see what $\frac{d \log(1 - \sigma(x))}{dx}$ looks like (blue curve):</p>
+
+
+
+<center>
+<figure id="fig_acf9702a765059e4b85c95d56d5324d356929606"></figure>
+</center>
+
+<script type="text/javascript">
+functionPlot({
+   width:"400", 
+   height:"300", 
+  target:  "#fig_" + "acf9702a765059e4b85c95d56d5324d356929606", 
+  data: JSON.parse("[{ 'title':'d Lghat / dx', 'fn':'-1/(exp(x)+1)'}, { 'title':'d Lg / dx', 'fn':'-exp(x)/(exp(x)+1)'}]".replace(/'/g, '"')),
+  
+   xAxis:JSON.parse("{ 'domain':[-10,10] }".replace(/'/g, '"')), 
+   yAxis:JSON.parse("{ 'domain':[-1,0] }".replace(/'/g, '"')), 
+   disableZoom:"True", 
+});
+
+
+  var caption = document.createElement("figcaption")
+  caption.append("When $D(x)$ is close to $0$. the derivative of $L_{G}$ (blue) is small, while the derivative of $\\hat{L}_{G}$ (red) is large. The increasing width of the red line is due to a bug in the plotting library.")
+  document.getElementById("fig_acf9702a765059e4b85c95d56d5324d356929606").appendChild(caption)
+
+</script>
+
+
+<p>The gradient of $L_G$ diminishes as $D$ gets better at classifying samples from <span  class="math">\(G(z)\)</span> as fake. This can cause training to fail when $D$ can easily distinguish $p(x)$ from <span  class="math">\(G(z)\)</span>. This is often the case early in training, when samples generated by $G$ are close to just random noise. To help alleviate diminishing gradients early in training, [1] recommends a modified $G$ loss function:</p>
+
+<p><span  class="math">\[
+\hat{L}_{G} = E_{z \sim p(z)}-\log\Big[ \sigma \big(D(G(z)\big) \Big]
+\]</span></p>
+
+<p><span  class="math">\(\hat{L}_{G}\)</span> provides strong gradients (see red line in plot above) when $D$ is good at classifying samples from <span  class="math">\(G(z)\)</span> as fake, but diminishes as $G$ learns to fool $D$. <span  class="math">\(\hat{L}_{G}\)</span> and <span  class="math">\(L_{G}\)</span> are used interchangeably in this text, but <span  class="math">\(\hat{L}_{G}\)</span> is used in the implementation. (NOTE: Some new literature suggests <span  class="math">\(\hat{L}_{G}\)</span> is in part the cause of the some of the failure modes discussed below, adding a discussion on that literature is on the TODO list.)</p>
+
+<p>The training algorithm is then:</p>
+
+<p><span  class="math">\[
+\begin{aligned}
+&\text{ for each mini batch } \{x_1,...,x_m\} \text{ do:} \\
+&\hspace{20pt} \text{Sample } \{z_1,...,z_m\} \text{ from } p(z) \\
+&\hspace{20pt} L_{D} = \frac{1}{m} \sum_{i=1}^m -\log\Big[ \sigma \big( D(x_i) \big) \Big] - \log\Big[ 1- \sigma \big(D(G(z_i)\big) \Big] \\
+&\hspace{20pt} w_D = w_D - lr\Delta L_D \\
+\\
+&\hspace{20pt} \text{Sample } \{z_1,...,z_m\} \text{ from } p(z) \\
+&\hspace{20pt} L_{D} = \frac{1}{m} \sum_{i=1}^m -\log\Big[ \sigma \big(D(G(z_i)\big) \Big] \\
+&\hspace{20pt} w_G = w_G - lr\Delta L_G \\
+\end{aligned}
+\]</span></p>
+
+<p>where <span  class="math">\(w_G\)</span> and <span  class="math">\(w_D\)</span> are the weights of networks <span  class="math">\(G\)</span> and <span  class="math">\(D\)</span>, and $lr$ is the learning rate. [1] suggests that <span  class="math">\(D\)</span> could be updated many times per <span  class="math">\(G\)</span> update. However, I'm aware very few examples of performing multiple <span  class="math">\(D\)</span> updates in practice, and points 11 and 14 of [3] also suggest it isn't worth trying.</p>
+
+<p>This implementation contains 2 versions, differing in their network architecture. The &quot;linear&quot; version uses a 2 layer liner network similar to that used in [1]. The &quot;conv&quot; version uses a convolutional networks similar to that used in [2]. All networks were trained on the <a href="http://yann.lecun.com/exdb/mnist/">MNIST dataset.</a> The results from the convolutional network are discussed below.</p>
+
+<h3 id="convolutional-gan">Convolutional GAN</h3>
+
+<p>[3] Recommends using a GAN with convolutional networks because they &quot;just work&quot;. So a deep convolutional GAN (DCGAN) seems like a good place to start. The original DCGAN paper [2] has a nice little box on the third page outlining how to build networks that will be stable durning training. The networks used here follow the guidelines fairly closely, with the following exceptions:</p>
+
+<ul>
+<li>1 fewer layers. One layer is removed to account for the smaller MNIST images (28x28) compared to 32x32 in [2]</li>
+<li>Less features per layer. Just to reduce training time for experiments, a large network isn't needed for MNIST</li>
+<li>LeakyReLU in both $G$ and $D$. [3] uses them only in $D$.</li>
+<li>Use of sigmoid function instead of a Tanh. This was only changed because my implementation of MNIST is in the range [0,1]. A discussion on the (most likely minor) differences Tanh vs sigmoid cause during training are for another day.<br></li>
+</ul>
+
+<p>Durning training, I tracked</p>
+
+<ul>
+<li>loss/G - The loss used to train $G$: <span  class="math">\(\hat{L}_{G} = \frac{1}{m} \sum_{i=1}^m -\log\Big[ \sigma \big(D(G(z_i)\big) \Big]\)</span></li>
+<li>loss/real - The $p(x)$ half of the loss used to train $D$: <span  class="math">\(\frac{1}{m} \sum_{i=1}^m -\log\Big[ \sigma \big( D(x_i) \big) \Big]\)</span></li>
+<li>loss/fake - The $G(z)$ half of the loss used to train $D$: <span  class="math">\(\frac{1}{m} \sum_{i=1}^m -\log\Big[\sigma \big(D(G(z_i)\big) \Big]\)</span></li>
+<li>norms/G: <span  class="math">\(||\frac{dG}{d\hat{L}_G}||\)</span></li>
+<li>norms/D: <span  class="math">\(||\frac{dD}{d\hat{L}_G}||\)</span></li>
+</ul>
+
+<p>The models were trained with the dimensionality of $p(z)$ equal to $2$ (purple curves) and $7$ (blue curves). Network training appeared fairly stable:</p>
+
+<p><center>
+<figure>
+  <img src="https://github.com/cottersci/ModelTests/blob/master/models/GAN/vanilla/results/publish/DCGAN_lr=1e-5_zD=2and7.png?raw=true" width="100%"/>
+  <figcaption>Training curves from DCGAN zDim=2 (orange) and zDim=8 (blue). x axis is number of images trained on.</figcaption>
+</figure>
+</center></p>
+
+<p>Training was stopped sooner on the zDim=2 training run after it became clear that while $G$ was learning numbers, it wasn't leaning a static mapping between $p(z)$ and $p(x)$. Instead, it cycled through mapping numbers to different parts of $p(z)$ as training progressed:</p>
+
+<p><center>
+<figure>
+  <img src="https://github.com/cottersci/ModelTests/blob/master/models/GAN/vanilla/results/publish/DCGAN_lr=1e-5_zD=2.gif?raw=true" width="33%"/>
+  <img src="https://github.com/cottersci/ModelTests/blob/master/models/GAN/vanilla/results/publish/DCGAN_lr=1e5_zD=7.gif?raw=true" width="33%"/>
+  <figcaption>A grid of images generated by $G(z)$ where $z$ are points at uniform intervals according to the pdf $\mathcal{N}(0,I)$ between approx. [-3,3]. Images were generated at uniform intervals during training. Left: zDim=2, Right: zDim=7</figcaption>
+</figure>
+</center></p>
+
+<p>It may be that there is too little variability in a 2 dimensional $p(z)$ for $G$ to find a mapping from $p(z)$ to $p(x)$ that covers all the variability in $p(x)$. In agreement with this hypothesis, increasing zDim to 7 stabilizes the mapping and allows $G$ to generate all 10 digits from $p(z)$.</p>
+
+<h3 id="is-training-stable">Is training stable?</h3>
+
+<p>Papers rarely show loss/gradient curves of the networks during training, and I was surprised to find very little information on what the curves of a correctly trained GAN looks like in practice. Ideally, losses from $D$ and $G$ would be perfectly stable for the length for the training and <span  class="math">\(\sigma\big(D(G(z))\big) = 0.5\)</span> (and therefore <span  class="math">\(L_G = -log(0.5) = 0.3\)</span>) for all z. In the training curves shown above, $D$ is clearly slowly winning out over $G$. The question then becomes, is it worth adjusting hyperparamaters to further stabilize the losses? Without a criteria to test how well the images generated by $G$ match images in <span  class="math">\(p(x)\)</span>, I do not think there is an easy answer. We do know, however, that at some point $\sigma$ will become so saturated that it's gradient will become 0, despite even the modified $\hat{L}_G$ loss function. To get an idea of what saturating $\sigma$ looks like, I trained $D$ while keeping the weights of $G$ constant.</p>
+
+<p><center>
+<figure>
+  <img src="https://github.com/cottersci/ModelTests/blob/master/models/GAN/vanilla/results/publish/DCGAN_lr=1e-5_or0_zD=2.png?raw=true" width="100%"/>
+  <figcaption>Training curves from DCGAN in which the weights of $G$ are updated (orange) or held constant (red). zDim=2 for both. x axis is number of images trained on.</figcaption>
+</figure>
+</center></p>
+
+<p>As expected, the gradient flowing out of $D$ quickly drops to $0$, but it requires $D$ to achieve very high classification confidence ($L_G \approx &gt; 16$). As long as the gradient flowing out of $D$ does not start to diminish, there should be a signal for $G$ to continue to learn. In the case of both the zD=2 and zD=7 models I trained, neither were close to $D$ having confidence great enough to diminish the gradients. The norm of the gradient flowing out of $D$ was actually increasing in both cases, presumably due to the use of $\hat{L}_G$, which has larger gradients as $D$ gets better (up to some cutoff). I don't think I would spend more time trying to stabilize the losses unless the gradients begin to diminish or the generated images look visibly worse (suggesting the gradients are not providing a useful signal).</p>
+
+<h2 id="homework">HOMEWORK</h2>
+
+<ul>
+<li><input type="checkbox" disabled=""> Train networks longer to see how losses and gradients evolve later in training.</li>
+<li><input type="checkbox" disabled=""> Recreate the vanishing gradients of $L_{G} = E_{z \sim p(z)}\log\Big[ 1 - \sigma \big(D(G(z)\big) \Big]$ in training.</li>
+<li><input type="checkbox" disabled=""> Overview literature exploring the downfalls of GAN training.</li>
+<li><input type="checkbox" disabled=""> Train DCGAN with the exact networks used in [2].</li>
+<li><input type="checkbox" disabled=""> Discuss results of linear network GANs.</li>
+</ul>
+
+<h2 id="references">REFERENCES</h2>
+
+<pre><code>[1] Goodfellow, Ian, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley,
+      Sherjil Ozair, Aaron Courville, and Yoshua Bengio. 2014. “Generative
+      Adversarial Nets.” In Advances in Neural Information Processing Systems,
+      2672–2680.http://papers.nips.cc/paper/5423-generative-adversarial-nets.
+[2] Radford, A., Metz, L., and Chintala, S. (2015). Unsupervised representation
+      learning with deep convolutional generative adversarial networks. ArXiv
+      Prepr. ArXiv151106434.
+[3] https://github.com/soumith/ganhacks
+</code></pre>
+
+								</section>
+
+						</div>
+						<script>
+							renderMathInElement(
+									document.getElementById("main"),
+									{
+											delimiters: [
+													{left: "$$", right: "$$", display: true},
+													{left: "\\[", right: "\\]", display: true},
+													{left: "$", right: "$", display: false},
+													{left: "\\(", right: "\\)", display: false}
+											]
+									}
+							);
+						</script>
+
+				
+					<footer id="footer">
+						<section class="split contact">
+  <section>
+    <h3>Email</h3>
+    <p><a href="mailto:cotter@sciencesundries.com">cotter@sciencesundries.com</a></p>
+  </section>
+</section>
+<section>
+  <center>
+    <ul class="icons alt">
+      <li><a href="https://github.com/cottersci" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
+      <li><a href="https://www.linkedin.com/in/crcotter/" class="icon alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+      
+    </ul>
+  </center>
+</section>
+
+					</footer>
+
+
+				
+					<div id="copyright">
+						<ul>
+  <li>&copy; Chris Cotter</li>
+  <li>Proudly powered by <a href="https://gohugo.io/">Hugo</a> and <a href="https://github.com/">GitHub</a></li>
+  <li>Design: <a href="http://html5up.net">HTML5 UP</a>, modified under a <a href="https://creativecommons.org/licenses/by/3.0/">CC:BY</a> license.</li>
+</ul>
+
+					</div>
+
+			</div>
+
+		
+			<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/jquery.scrollex.min.js"></script>
+<script src="/assets/js/jquery.scrolly.min.js"></script>
+<script src="/assets/js/skel.min.js"></script>
+<script src="/assets/js/util.js"></script>
+<script src="/assets/js/main.js"></script>
+
+	</body>
+</html>

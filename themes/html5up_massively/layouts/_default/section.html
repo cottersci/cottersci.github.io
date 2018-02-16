@@ -7,6 +7,8 @@
 <html>
 	<head>
 		{{ partial "headers/html_header.html" . }}
+		{{ partial "headers/katex.html" . }}
+		{{ partial "headers/function_plot.html" . }}
 	</head>
 	<body class="is-loading">
 
@@ -35,6 +37,19 @@
 								</section>
 
 						</div>
+						<script>
+							renderMathInElement(
+									document.getElementById("main"),
+									{
+											delimiters: [
+													{left: "$$", right: "$$", display: true},
+													{left: "\\[", right: "\\]", display: true},
+													{left: "$", right: "$", display: false},
+													{left: "\\(", right: "\\)", display: false}
+											]
+									}
+							);
+						</script>
 
 				<!-- Footer -->
 					<footer id="footer">
@@ -51,6 +66,5 @@
 
 		<!-- Scripts -->
 			{{ partial "headers/scripts.html" . }}
-
 	</body>
 </html>

@@ -1,0 +1,53 @@
+{{/*
+Uses https://github.com/mauriciopoppe/function-plot to generate a plot of functions
+
+example:
+
+{{% functionPlot
+      data="[{ 'fn':'x^2' }]"
+      title="test"
+      xAxis="{ 'label':'xAxis' }"
+      yAxis="{ 'label':'yAxis' }
+      width="300"
+      height="300"
+%}}
+
+see https://github.com/mauriciopoppe/function-plot  for JSON object structure
+
+NOTE: to pass a JSON array though to the snippit, it must be of the format
+  "[{ 'fn':'x^2' }]" where the use of " and ' is important
+
+PARAMATERS
+  :param data: An JSON array of function objects
+
+  :optional title: A plot title
+  :optional xAxis: JSON xAxis object
+  :optional yAxis: JSON xAxis object
+  :optional width: plot width
+  :optional height: plot height
+  :optional caption: figure caption
+  :optional disableZoom: true to disable drag and zoom on the graph
+*/}}
+
+<center>
+<figure id="{{ with .Get "data"}}fig_{{ sha1 . }}{{end}}"></figure>
+</center>
+
+<script type="text/javascript">
+functionPlot({
+  {{ with .Get "width"}} width:{{.}}, {{ end }}
+  {{ with .Get "height"}} height:{{.}}, {{ end }}
+  target: {{ with .Get "data"}} "#fig_" + {{ sha1 . }}, {{end}}
+  data: JSON.parse({{ .Get "data" }}.replace(/'/g, '"')),
+  {{ with .Get "title"}} title:{{.}}, {{ end }}
+  {{ with .Get "xAxis"}} xAxis:JSON.parse({{.}}.replace(/'/g, '"')), {{ end }}
+  {{ with .Get "yAxis"}} yAxis:JSON.parse({{.}}.replace(/'/g, '"')), {{ end }}
+  {{ with .Get "disableZoom"}} disableZoom:{{.}}, {{end}}
+});
+
+{{ if .Get "caption"}}
+  var caption = document.createElement("figcaption")
+  caption.append({{.Get "caption"}})
+  document.getElementById("{{ with .Get "data"}}fig_{{ sha1 . }}{{end}}").appendChild(caption)
+{{ end }}
+</script>

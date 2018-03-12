@@ -1,0 +1,276 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Linear Regression, Linear Discriminant Analysis, and Logistic Regression </title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/custom.css" />
+<noscript><link rel="stylesheet" href="/sassets/css/noscript.css" /></noscript>
+
+		
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-beta1/katex.min.js" integrity="sha384-O4hpKqcplNCe+jLuBVEXC10Rn1QEqAmX98lKAIFBEDxZI0a+6Z2w2n8AEtQbR4CD" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-beta1/contrib/auto-render.min.js" integrity="sha384-IiI65aU9ZYub2MY9zhtKd1H2ps7xxf+eb2YFG9lX6uRqpXCvBTOidPRCXCrQ++Uc" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-beta1/katex.min.css" integrity="sha384-VEnyslhHLHiYPca9KFkBB3CMeslnM9CzwjxsEbZTeA21JBm7tdLwKoZmCt3cZTYD" crossorigin="anonymous">
+
+		<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="/js/function-plot.js"></script>
+
+	</head>
+	<body class="is-loading">
+
+		
+			<div id="wrapper">
+
+				
+					<header id="header">
+						<a href="index.html" class="logo">Science Sundries</a>
+
+					</header>
+
+				
+					<nav id="nav">
+						<ul class="links">
+  
+  
+    <li class=""><a href="/">About</a></li>
+  
+    <li class=""><a href="/publications/">Publications</a></li>
+  
+    <li class=" active"><a href="/sundries/">Sundries</a></li>
+  
+</ul>
+<ul class="icons">
+  <li><a href="https://github.com/cottersci" class="icon fa-github"><span class="label">GitHub</span></a></li>
+  <li><a href="https://www.linkedin.com/in/crcotter/" class="icon alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+  
+</ul>
+
+					</nav>
+
+				
+						<div id="main">
+
+							
+								<section class="post">
+									<header class="major">
+										<h3>Linear Regression, Linear Discriminant Analysis, and Logistic Regression </h3>
+									</header>
+									<p>Some simple definitions to work from:</p>
+
+<ul>
+<li>There is some (probably unknown, but sampleable) distribution <span  class="math">\(p_{data}\)</span></li>
+<li>We have paired real samples <span  class="math">\([(x_1,g_1), ..., (x_N,g_N)]\)</span>. Where <span  class="math">\(x_i\)</span> is a sample from <span  class="math">\(x_i \sim P(X|G = g_i)\)</span> and <span  class="math">\(g\)</span> is the group <span  class="math">\(x_i\)</span> should be classified in (<span  class="math">\(g \in G, G = (g^k,...,K)\)</span>). Note that K is typically much less than N.</li>
+<li>X and G are not independent (<span  class="math">\(P(X|G) \not= P(X)P(G)\)</span>), as there would be no structure to use to classify.</li>
+</ul>
+
+<h3 id="classification-using-linear-regression">Classification using Linear Regression</h3>
+
+<h4 id="a-simple-solution-is-to-perform-linear-regression-on-a-indicator-matrix-y">A simple solution is to perform linear regression on a indicator matrix Y</h4>
+
+<p>For each group <span  class="math">\(g^k\)</span>, let <span  class="math">\(y^k\)</span> be a vector of size N, where $y^k_i == 1$ if <span  class="math">\(x_i\)</span> is from group <span  class="math">\(g^k\)</span> and <span  class="math">\(0\)</span> otherwise. Let <span  class="math">\(Y\)</span> be a matrix of $y$ vectors <span  class="math">\(Y = (y^1,...,y^K)\)</span>. $Y$ is therefore an <span  class="math">\(N \times K\)</span> matrix with each row having a single 1. We wish to find the function <span  class="math">\(f(X) = Y\)</span>. Using linear regression, <span  class="math">\(f(X)\)</span> can be approximated using our test data as:</p>
+
+<p><span  class="math">\[
+\hat{f}(X) = (1,x^T)\hat{B}
+\]</span></p>
+
+<p>where</p>
+
+<p><span  class="math">\[
+\hat{B} = (X^TX)^{-1}X^TY
+\]</span></p>
+
+<p>In this case, X was augmented with a column of ones to introduce an intercept into the regression, requiring x to be concatenated with a 1. New values of $x$ can then be classified as:</p>
+
+<p><span  class="math">\[
+argmax_{k \in G} = \hat{f}_k((1,x^T))
+\]</span></p>
+
+<p>where $k$ is the $k^{th}$ column of the output matrix of <span  class="math">\(\hat{f}(x)\)</span>.</p>
+
+<p><strong>Keep in mind</strong>:</p>
+
+<ul>
+<li>Regression of an indicator matrix suffers from &quot;masking&quot;.
+
+<ul>
+<li>Masking occurs when 3 or more classes are lined up along an axis. I. E. if you would look directly down onto that axis the three groups look like one.</li>
+<li>Masking causes the column in <span  class="math">\(\hat{f}_k(X)\)</span>  corresponding to the middle class along the axis to never be maximal for any position $x$. As such, no data point will be classified into that group.</li>
+<li>Masking can only occur when there are 3 or more groups.</li>
+<li>&quot;A loose but general rule is that if <span  class="math">\(K \ge 3\)</span> classes are lined up, polynomial terms up to degree <span  class="math">\(K - 1\)</span> might be needed to resolve them.&quot; ([1], p.104).</li>
+</ul></li>
+</ul>
+
+<h3 id="linear-discriminant-analysis">Linear Discriminant Analysis</h3>
+
+<p>By viewing regression of an indicator matrix as an estimate for the conditional expectation: <span  class="math">\(\hat{f}(x) \approx E(Y_k|X=x) = P(G = k | X = x)\)</span> we can create a probabilistic rational for the above regression approach. However, as noted, it can &quot;mask&quot; groups if <span  class="math">\(K > 3\)</span>, and real world data where <span  class="math">\(K >> 2\)</span> it may be hard to tell by viewing the data if masking will occur. The question then becomes, is there a better estimate of <span  class="math">\(P(G|X)\)</span>? Bayes theorem provides:</p>
+
+<p><span  class="math">\[
+P(G = g|X = x) = \frac{P(X = x|G = g)P(G = g)}{P(X = x)}
+\]</span></p>
+
+<p>Since we have training data pairs <span  class="math">\([(x_1,g_1),...,(x_N,g_N)]\)</span> we can definitely develop estimates for <span  class="math">\(P(X = x|G = g), P(G = g)\)</span> and <span  class="math">\(P(X = x)\)</span>.</p>
+
+<p>LDA approximates <span  class="math">\(P(X = x|G = g)\)</span> by modeling it as a mutlivarite Gaussian:</p>
+
+<p><span  class="math">\[
+f_k(x) = \frac{1}{(2\pi)^{p/2}|\Sigma_k|^{1/2}}e^{\frac{1}{2}(x-\mu_k)^T|\Sigma_k|^{-1}(x-u_k)}
+\]</span></p>
+
+<p>This isn't a linear function, as the &quot;Linear&quot; in LDA seems to apply. The &quot;Linear&quot; isn't in regard to the discriminate function <span  class="math">\(f_k(x)\)</span>, but instead to the fact the decision boundaries generated by LDA are linear. Page 102 0f [1] notes that we only require some monotone transformation of <span  class="math">\(f_k(x)\)</span> or <span  class="math">\(P(G = g|X = x)\)</span> to be linear for the decision boundary to be linear. For LDA, and for Logistic Regression discussed below, the function of choice is the log odds function:</p>
+
+<p><span  class="math">\[
+\log \frac{P(G = k|X = x)}{P(G = l|X = x)}
+\]</span></p>
+
+<p>By assuming that a common covariance matrix $\Sigma$ for all <span  class="math">\(f_k(x), (k=1,...,N)\)</span>,</p>
+
+<p><span  class="math">\[
+\log \frac{f_k(x)}{f_l(x)} = \log \frac{\pi_k}{\pi_l} - \frac{1}{2}(\mu_k - \mu_l)^T \Sigma^{-1}(\mu_k - \mu_l) + x^T \Sigma (\mu_k - \mu_l)
+\]</span></p>
+
+<p>where $k$ and $l$ are two groups in $G$ and <span  class="math">\(\pi_k = P(G = g_k)\)</span>. Which is a linear equation with respect to $x$.</p>
+
+<p>We can estimate the means, covariance matrix, and class probabilities as follows:</p>
+
+<ul>
+<li><span  class="math">\(\hat{\pi_k} = N_k/N\)</span> where <span  class="math">\(N_k\)</span> is the number of training points in class $k$</li>
+<li><span  class="math">\(\hat{\mu_k} = \sum{g_i = k} x_i/N-k\)</span>. The mean of the training data in class $k$</li>
+<li><span  class="math">\(\hat{\Sigma} = \sum^K_{k=1}\sum_{g_i=k}(x_i - \hat{u_k})(x_i - \hat{u_k})^T/(N-K)\)</span>. The average of the covariance matrix of all the classes</li>
+</ul>
+
+<p>New values can be classified as above by using:</p>
+
+<p><span  class="math">\[
+argmax_{k \in G} = \hat{f}_k(x)
+\]</span></p>
+
+<p><strong>Keep in mind</strong>:</p>
+
+<ul>
+<li>LDA Does not have the same masking problem as regression of a indicator indictor matrix.</li>
+<li>If it is not safe to assume equal <span  class="math">\(\Sigma\)</span>s, quadratic discriminate analysis can be used, but with the tradeoff of more parameters to estimate and more complicated equations.</li>
+</ul>
+
+<h3 id="logistic-regression">Logistic Regression</h3>
+
+<p>Logistic Regression approximates <span  class="math">\(P(G|X)\)</span> using different approximations of <span  class="math">\(P(X = x|G = g), P(G = g)\)</span> and <span  class="math">\(P(X = x)\)</span>. One advantage of logistic regression is that <span  class="math">\(\sum_{k = 1}^P P(G = k|X=x) = 1\)</span> for each $x$. In this case:</p>
+
+<p><span  class="math">\[
+  P(G=1|X=x) = \frac{e^{f(x)}}{1 + e^{f(x)}}
+\]</span></p>
+
+<p>where $f(x)$ is a simple linear model: $f(x) = \beta_0 + \beta^T x$. In the two group case, <span  class="math">\(P(G=2|X)\)</span> can be rewritten as</p>
+
+<p><span  class="math">\[
+\begin{aligned}
+  1-P(G=1|X=x) &= \frac{1}{1 + e^{f(x)}}
+\end{aligned}
+\]</span></p>
+
+<p>Substituting into the log odds produces:</p>
+
+<p><span  class="math">\[
+\log \frac{P(G=1|X=x)}{1-P(G=1|X=x)} = \frac{\frac{e^{f(x)}}{1 + e^{f(x)}}}{\frac{1}{1 + e^{f(x)}}} = f(x) = \beta_0 + \beta^T x
+\]</span></p>
+
+<p>Again, $f(x)$ is linear in $x$.  Extending logistic regression to an arbitrary number of $K$ classes is done by fitting $K-1$ log-odds transformations where the denominator can be an arbitrary class in <span  class="math">\(G\)</span> ([1,p119] provides a proof for this).</p>
+
+<p>There is no simple solution to solving Logistic Regression, it is typically fit by maximum likelihood, where the likelihood function is:</p>
+
+<p><span  class="math">\[
+l(\theta) = \sum_{i=1}^{N} \log P(x_i;\theta)
+\]</span></p>
+
+<h3 id="conclusions">Conclusions</h3>
+
+<p>Since regression of an indicator matrix has possible (and likely) issues when there are more than two classes, in most cases, the question is LDA or logistic regression:</p>
+
+<p><strong>For Logistic Regression:</strong></p>
+
+<ul>
+<li>Logistic regression allows for the same analysis of coefficient significance as linear regression ([1], p. 48]), allowing simple analysis of the importance of each dimension of $x$ in the classification.</li>
+<li>Can be Regularized (LDA can as well).</li>
+<li>Provides probability estimates that sum to 1.</li>
+<li>Does not make assumptions about $P(X)$</li>
+<li>With 30% more data, it will do as well as LDA ([1], p. 125).</li>
+<li>Justifiable extension to qualitative predictors.</li>
+</ul>
+
+<p><strong>For LDA:</strong></p>
+
+<ul>
+<li>Extra assumptions mean that it have less variance than LDA with the same amount of data (assuming assumptions hold).</li>
+<li>Extra assumptions may allow for easier inclusion of unlabeled data</li>
+</ul>
+
+<p>[1], p. 128: &quot;It is generally felt that logistic regression is a safer, more robust bet than LDA [...], It is our experience that the models give very similar results, even when LDA is used inappropriately, such as with qualitative predictors.&quot;</p>
+
+<h2 id="references">REFERENCES</h2>
+
+<pre><code>[1] &quot;The Elements of Statistical Learning&quot; by Trevor Hastie, Robert
+      Tibshirani, and Jerome Friedman
+</code></pre>
+
+								</section>
+
+						</div>
+						<script>
+							renderMathInElement(
+									document.getElementById("main"),
+									{
+											delimiters: [
+													{left: "$$", right: "$$", display: true},
+													{left: "\\[", right: "\\]", display: true},
+													{left: "$", right: "$", display: false},
+													{left: "\\(", right: "\\)", display: false}
+											]
+									}
+							);
+						</script>
+
+				
+					<footer id="footer">
+						<section class="split contact">
+  <section>
+    <h3>Email</h3>
+    <p><a href="mailto:cotter@sciencesundries.com">cotter@sciencesundries.com</a></p>
+  </section>
+</section>
+<section>
+  <center>
+    <ul class="icons alt">
+      <li><a href="https://github.com/cottersci" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
+      <li><a href="https://www.linkedin.com/in/crcotter/" class="icon alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+      
+    </ul>
+  </center>
+</section>
+
+					</footer>
+
+
+				
+					<div id="copyright">
+						<ul>
+  <li>&copy; Chris Cotter</li>
+  <li>Proudly powered by <a href="https://gohugo.io/">Hugo</a> and <a href="https://github.com/">GitHub</a></li>
+  <li>Design: <a href="http://html5up.net">HTML5 UP</a>, modified under a <a href="https://creativecommons.org/licenses/by/3.0/">CC:BY</a> license.</li>
+</ul>
+
+					</div>
+
+			</div>
+
+		
+			<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/jquery.scrollex.min.js"></script>
+<script src="/assets/js/jquery.scrolly.min.js"></script>
+<script src="/assets/js/skel.min.js"></script>
+<script src="/assets/js/util.js"></script>
+<script src="/assets/js/main.js"></script>
+
+	</body>
+</html>

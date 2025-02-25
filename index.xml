@@ -1,25 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Science Sundries</title>
     <link>http://www.sciencesundries.com/</link>
     <description>Recent content on Science Sundries</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Mar 2017 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="http://www.sciencesundries.com/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Linear Regression, Linear Discriminant Analysis, and Logistic Regression </title>
-      <link>http://www.sciencesundries.com/sundries/linearclassification/</link>
-      <pubDate>Mon, 14 Aug 2017 20:10:07 -0400</pubDate>
-      
-      <guid>http://www.sciencesundries.com/sundries/linearclassification/</guid>
-      <description>Some simple definitions to work from:
- There is some (probably unknown, but sampleable) distribution \(p_{data}\) We have paired real samples \([(x_1,g_1), ..., (x_N,g_N)]\). Where \(x_i\) is a sample from \(x_i \sim P(X|G = g_i)\) and \(g\) is the group \(x_i\) should be classified in (\(g \in G, G = (g^k,...,K)\)). Note that K is typically much less than N. X and G are not independent (\(P(X|G) \not= P(X)P(G)\)), as there would be no structure to use to classify.</description>
-    </item>
-    
+    <lastBuildDate></lastBuildDate>
+    <atom:link href="http://www.sciencesundries.com/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
